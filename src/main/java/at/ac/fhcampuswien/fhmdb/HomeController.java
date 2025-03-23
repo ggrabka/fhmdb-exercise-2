@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -42,13 +43,19 @@ public class HomeController implements Initializable {
 
     protected SortedState sortedState;
 
+    public MovieAPI movieAPI = new MovieAPI();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeState();
+        try {
+            initializeState();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         initializeLayout();
     }
 
-    public void initializeState() {
+    public void initializeState () throws Exception {
         allMovies = Movie.initializeMovies();
         observableMovies.clear();
         observableMovies.addAll(allMovies); // add all movies to the observable list
@@ -114,8 +121,9 @@ public class HomeController implements Initializable {
                 .toList();
     }
 
-    public void applyAllFilters(String searchQuery, Object genre) {
-        List<Movie> filteredMovies = allMovies;
+    public void applyAllFilters(String searchQuery, Object genre) throws Exception{
+        String genreStr = (genre != null) ? genre.toString() : null;
+        List<Movie> filteredMovies = (List<Movie>) movieAPI.getFilmList(searchQuery,genreStr);
 
         if (!searchQuery.isEmpty()) {
             filteredMovies = filterByQuery(filteredMovies, searchQuery);
@@ -129,7 +137,7 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
-    public void searchBtnClicked(ActionEvent actionEvent) {
+    public void searchBtnClicked(ActionEvent actionEvent) throws Exception {
         String searchQuery = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
 
