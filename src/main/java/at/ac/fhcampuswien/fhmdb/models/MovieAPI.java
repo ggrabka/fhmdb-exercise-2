@@ -18,14 +18,24 @@ public class MovieAPI {
     String url = "https://prog2.fh-campuswien.ac.at/movies" ;
     URIBuilder uriBuilder;
 
-    public Collection<Movie> getFilmList(String query, String genre) throws Exception {
+    public Collection<Movie> getFilmList(String searchQuery, String genre, String releaseYear, String rating) throws Exception {
         uriBuilder = new URIBuilder(url);
-        if (query != null && !query.trim().isEmpty()) {
-            uriBuilder.addParameter("query", query.trim());
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            uriBuilder.addParameter("query", searchQuery.trim());
         }
         if ((genre != null && genre != "No filter") && !genre.trim().isEmpty()) {
             uriBuilder.addParameter("genre", genre.trim().toUpperCase());
         }
+
+        if ((releaseYear != null && releaseYear != "No release year") && !releaseYear.trim().isEmpty()) {
+            uriBuilder.addParameter("releaseYear", releaseYear);
+        }
+
+        if ((rating != null && rating != "No rating") && !rating.trim().isEmpty()) {
+            uriBuilder.addParameter("rating", rating);
+        }
+
+
         URI uri = uriBuilder.build();
 
         uriBuilder.build();
