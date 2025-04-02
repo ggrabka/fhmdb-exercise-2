@@ -175,7 +175,7 @@ public class HomeController implements Initializable {
 
     public void applyAllFilters(String searchQuery, Object genre, Object releaseYear, Object rating) throws Exception{
         String genreStr = (genre != null) ? genre.toString() : null;
-        List<Movie> filteredMovies = (List<Movie>) movieAPI.getFilmList(searchQuery,genreStr,String.valueOf(releaseYear),String.valueOf(rating));
+        List<Movie> filteredMovies = (List<Movie>) movieAPI.getFilmList(searchQuery,genreStr,releaseYear,rating);
 
         if (!searchQuery.isEmpty()) {
             filteredMovies = filterByQuery(filteredMovies, searchQuery);
