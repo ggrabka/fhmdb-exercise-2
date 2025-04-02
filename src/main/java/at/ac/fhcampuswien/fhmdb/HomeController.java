@@ -94,7 +94,8 @@ public class HomeController implements Initializable {
         ratingList.sort(Comparator.naturalOrder());
         ratingComboBox.getItems().add("No rating");
         ratingComboBox.getItems().addAll(ratingList);
-        releaseYearComboBox.setPromptText("Filter by Rating");
+        ratingComboBox.setPromptText("Filter By Rating");
+        releaseYearComboBox.setPromptText("Filter by Year");
     }
 
     public void sortMovies(){
