@@ -307,7 +307,7 @@ class HomeControllerTest {
     }
 
     @Test
-    void sample_Test_for_get_Most_Popular_Actor() throws Exception {
+    void get_Most_Popular_Actor() throws Exception {
         //given
         homeController.initializeState();
 
@@ -315,7 +315,43 @@ class HomeControllerTest {
        String mostPopularActor = homeController.getMostPopularActor(movies.initializeMovies());
 
         //then
-        assertEquals(mostPopularActor,"Leonardo DiCaprio");
+        assertEquals("Leonardo DiCaprio",mostPopularActor);
+    }
+
+    @Test
+    void get_Longest_Movie_Title() throws Exception {
+        //given
+        homeController.initializeState();
+
+        //when
+        int longestMovieTitleLength = homeController.getLongestMovieTitle(movies.initializeMovies());
+
+        //then
+        assertEquals(46,longestMovieTitleLength);
+    }
+
+    @Test
+    void count_movies_from() throws Exception {
+        //given
+        homeController.initializeState();
+
+        //when
+        long movieCount = homeController.countMoviesFrom(movies.initializeMovies(),"Martin Scorsese");
+
+        //then
+        assertEquals(2,movieCount);
+    }
+
+    @Test
+    void get_movies_between_years() throws Exception {
+        //given
+        homeController.initializeState();
+
+        //when
+        List<Movie> movieList = homeController.getMoviesBetweenYears(movies.initializeMovies(), 2000, 2010);
+
+        //then
+        assertEquals(7,movieList.size());
     }
 
 }
