@@ -17,6 +17,8 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HomeController implements Initializable {
     @FXML
@@ -206,5 +208,21 @@ public class HomeController implements Initializable {
 
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
+    }
+
+    String getMostPopularActor(List<Movie> movies) {
+        List<String> actors = movies
+                .stream()
+                .flatMap(movie -> movie.getMainCast().stream())
+                .collect(Collectors.toList());
+        String mostFrequentActor = actors
+                .stream()
+                .collect(Collectors.groupingBy(s -> s,Collectors.counting()))
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null).toString();
+        return mostFrequentActor;
     }
 }

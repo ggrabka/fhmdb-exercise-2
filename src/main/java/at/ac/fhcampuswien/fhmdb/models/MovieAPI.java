@@ -20,18 +20,18 @@ public class MovieAPI {
 
     public Collection<Movie> getFilmList(String searchQuery, String genre, String releaseYear, String rating) throws Exception {
         uriBuilder = new URIBuilder(url);
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+        if (searchQuery != null) {
             uriBuilder.addParameter("query", searchQuery.trim());
         }
-        if ((genre != null && genre != "No filter") && !genre.trim().isEmpty()) {
+        if ((genre != null && genre != "No filter")) {
             uriBuilder.addParameter("genre", genre.trim().toUpperCase());
         }
 
-        if ((releaseYear != null && releaseYear != "No release year") && !releaseYear.trim().isEmpty()) {
+        if ((releaseYear != "null" && releaseYear != "No release year")) {
             uriBuilder.addParameter("releaseYear", releaseYear);
         }
 
-        if ((rating != null && rating != "No rating") && !rating.trim().isEmpty()) {
+        if ((rating != "null" && rating != "No rating")) {
             uriBuilder.addParameter("rating", rating);
         }
 
