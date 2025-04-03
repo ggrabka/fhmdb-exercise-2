@@ -5,10 +5,14 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static at.ac.fhcampuswien.fhmdb.models.Genre.DRAMA;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -37,7 +41,8 @@ class HomeControllerTest {
         homeController.sortMovies();
 
         // then
-        List<Movie> expected = movies.initializeMovies();
+        List<Movie> expected = Movie.initializeMovies();
+        expected.sort(Comparator.comparing(movie -> movie.getTitle()));
         assertEquals(expected, homeController.observableMovies);
 
     }
@@ -52,74 +57,8 @@ class HomeControllerTest {
         homeController.sortMovies();
 
         // then
-        List<Movie> expected = Arrays.asList(
-                new Movie(
-                        "123456789",
-                        "The Wolf of Wall Street",
-                        "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.",
-                        Arrays.asList(Genre.DRAMA, Genre.ROMANCE, Genre.BIOGRAPHY),
-                        2013,
-                        8.4,
-                        "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg",
-                        180,
-                        Arrays.asList("Martin Scorese"),
-                        Arrays.asList("Terence Winter"),
-                        Arrays.asList("Leonardo Di Caprio","Jonah Hill","Margot Robbie")
-                        ),
-                new Movie(
-                        "23456789",
-                        "The Usual Suspects",
-                        "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat, which begin when five criminals meet at a seemingly random police lineup.",
-                        Arrays.asList(Genre.CRIME, Genre.DRAMA, Genre.MYSTERY),
-                        1995,
-                        8.6,
-                        "https://m.media-amazon.com/images/M/MV5BYTViNjMyNmUtNDFkNC00ZDRlLThmMDUtZDU2YWE4NGI2ZjVmXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_FMjpg_UX1000_.jpg",
-                        106,
-                        Arrays.asList("Bryan Singer"),
-                        Arrays.asList("Christopher McQuarrie"),
-                        Arrays.asList("Kevin Spacey", "Gabriel Byrne", "Chazz Palminteri")
-                        ),
-                new Movie(
-                        "3456789",
-                        "Puss in Boots",
-                        "An outlaw cat, his childhood egg-friend, and a seductive thief kitty set out in search for the eggs of the fabled Golden Goose to clear his name, restore his lost honor, and regain the trust of his mother and town.",
-                        Arrays.asList(Genre.COMEDY, Genre.FAMILY, Genre.ANIMATION),
-                        2011,
-                        6.6,
-                        "https://m.media-amazon.com/images/M/MV5BNjMyMDBjMGUtNDUzZi00N2MwLTg1MjItZTk2MDE1OTZmNTYxXkEyXkFqcGdeQXVyMTQ5NjA0NDM0._V1_FMjpg_UX1000_.jpg",
-                        90,
-                        Arrays.asList("Chris Miller"),
-                        Arrays.asList("Tom Wheeler", "Brian Lynch"),
-                        Arrays.asList("Antonio Banderas","Salma Hayek","Zach Galifianakis")
-                        ),
-                new Movie(
-                        "4367890",
-                        "Life Is Beautiful",
-                        "When an open-minded Jewish librarian and his son become victims of the Holocaust, he uses a perfect mixture of will, humor, and imagination to protect his son from the dangers around their camp." ,
-                        Arrays.asList(Genre.DRAMA, Genre.ROMANCE),
-                        1997,
-                        8.6,
-                        "https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_FMjpg_UX1000_.jpg",
-                        116,
-                        Arrays.asList("Roberto Benigni"),
-                        Arrays.asList("Vincenzo Cerami", "Roberto Benigni"),
-                        Arrays.asList("Roberto Benigni","Nicoletta Braschi, Giorgio Cantarini")
-                        ),
-                new Movie(
-                        "567890745",
-                        "Avatar",
-                        "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
-                        Arrays.asList(Genre.ANIMATION, Genre.DRAMA, Genre.ACTION),
-                        2009,
-                        7.8,
-                        "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3MzMtYTJmNjg3Nzk5MzRiXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_FMjpg_UX1000_.jpg",
-                        162,
-                        Arrays.asList("James Cameron"),
-                        Arrays.asList("James Cameron"),
-                        Arrays.asList("Sam Worthington", "Zoe Saldana","Sigourney Weaver")
-                        )
-        );
-
+        List<Movie> expected = Movie.initializeMovies();
+        expected.sort(Comparator.comparing(Movie::getTitle).reversed());
         assertEquals(expected, homeController.observableMovies);
     }
 
@@ -133,73 +72,8 @@ class HomeControllerTest {
         homeController.sortMovies();
 
         // then
-        List<Movie> expected = Arrays.asList(
-                new Movie(
-                        "567890745",
-                        "Avatar",
-                        "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.",
-                        Arrays.asList(Genre.ANIMATION, Genre.DRAMA, Genre.ACTION),
-                        2009,
-                        7.8,
-                        "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3MzMtYTJmNjg3Nzk5MzRiXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_FMjpg_UX1000_.jpg",
-                        162,
-                        Arrays.asList("James Cameron"),
-                        Arrays.asList("James Cameron"),
-                        Arrays.asList("Sam Worthington", "Zoe Saldana","Sigourney Weaver")
-                ),
-                new Movie(
-                        "4367890",
-                        "Life Is Beautiful",
-                        "When an open-minded Jewish librarian and his son become victims of the Holocaust, he uses a perfect mixture of will, humor, and imagination to protect his son from the dangers around their camp." ,
-                        Arrays.asList(Genre.DRAMA, Genre.ROMANCE),
-                        1997,
-                        8.6,
-                        "https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_FMjpg_UX1000_.jpg",
-                        116,
-                        Arrays.asList("Roberto Benigni"),
-                        Arrays.asList("Vincenzo Cerami", "Roberto Benigni"),
-                        Arrays.asList("Roberto Benigni","Nicoletta Braschi, Giorgio Cantarini")
-                ),
-                new Movie(
-                        "3456789",
-                        "Puss in Boots",
-                        "An outlaw cat, his childhood egg-friend, and a seductive thief kitty set out in search for the eggs of the fabled Golden Goose to clear his name, restore his lost honor, and regain the trust of his mother and town.",
-                        Arrays.asList(Genre.COMEDY, Genre.FAMILY, Genre.ANIMATION),
-                        2011,
-                        6.6,
-                        "https://m.media-amazon.com/images/M/MV5BNjMyMDBjMGUtNDUzZi00N2MwLTg1MjItZTk2MDE1OTZmNTYxXkEyXkFqcGdeQXVyMTQ5NjA0NDM0._V1_FMjpg_UX1000_.jpg",
-                        90,
-                        Arrays.asList("Chris Miller"),
-                        Arrays.asList("Tom Wheeler", "Brian Lynch"),
-                        Arrays.asList("Antonio Banderas","Salma Hayek","Zach Galifianakis")
-                ),
-                new Movie(
-                        "23456789",
-                        "The Usual Suspects",
-                        "A sole survivor tells of the twisty events leading up to a horrific gun battle on a boat, which begin when five criminals meet at a seemingly random police lineup.",
-                        Arrays.asList(Genre.CRIME, Genre.DRAMA, Genre.MYSTERY),
-                        1995,
-                        8.6,
-                        "https://m.media-amazon.com/images/M/MV5BYTViNjMyNmUtNDFkNC00ZDRlLThmMDUtZDU2YWE4NGI2ZjVmXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_FMjpg_UX1000_.jpg",
-                        106,
-                        Arrays.asList("Bryan Singer"),
-                        Arrays.asList("Christopher McQuarrie"),
-                        Arrays.asList("Kevin Spacey", "Gabriel Byrne", "Chazz Palminteri")
-                ),
-        new Movie(
-                "123456789",
-                "The Wolf of Wall Street",
-                "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.",
-                Arrays.asList(Genre.DRAMA, Genre.ROMANCE, Genre.BIOGRAPHY),
-                2013,
-                8.4,
-                "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg",
-                180,
-                Arrays.asList("Martin Scorese"),
-                Arrays.asList("Terence Winter"),
-                Arrays.asList("Leonardo Di Caprio","Jonah Hill","Margot Robbie")
-        ));
-
+        List<Movie> expected = Movie.initializeMovies();
+        expected.sort(Comparator.comparing(movie -> movie.getTitle()));
         assertEquals(expected, homeController.observableMovies);
 
     }
@@ -214,33 +88,11 @@ class HomeControllerTest {
         List<Movie> actual = homeController.filterByQuery(homeController.observableMovies, query);
 
         // then
-        List<Movie> expected = Arrays.asList(
-                new Movie(
-                        "4367890",
-                        "Life Is Beautiful",
-                        "When an open-minded Jewish librarian and his son become victims of the Holocaust, he uses a perfect mixture of will, humor, and imagination to protect his son from the dangers around their camp." ,
-                        Arrays.asList(Genre.DRAMA, Genre.ROMANCE),
-                        1997,
-                        8.6,
-                        "https://m.media-amazon.com/images/M/MV5BYmJmM2Q4NmMtYThmNC00ZjRlLWEyZmItZTIwOTBlZDQ3NTQ1XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_FMjpg_UX1000_.jpg",
-                        116,
-                        Arrays.asList("Roberto Benigni"),
-                        Arrays.asList("Vincenzo Cerami", "Roberto Benigni"),
-                        Arrays.asList("Roberto Benigni","Nicoletta Braschi, Giorgio Cantarini")
-                ),
-                new Movie(
-                        "123456789",
-                        "The Wolf of Wall Street",
-                        "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.",
-                        Arrays.asList(Genre.DRAMA, Genre.ROMANCE, Genre.BIOGRAPHY),
-                        2013,
-                        8.4,
-                        "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_FMjpg_UX1000_.jpg",
-                        180,
-                        Arrays.asList("Martin Scorese"),
-                        Arrays.asList("Terence Winter"),
-                        Arrays.asList("Leonardo Di Caprio","Jonah Hill","Margot Robbie")
-                ));
+        List<Movie> expected = Movie.initializeMovies()
+                        .stream()
+                        .filter(movie -> movie.getTitle().toLowerCase().contains(query.toLowerCase())
+                        || movie.getDescription().toLowerCase().contains(query.toLowerCase()))
+                        .toList();
 
         assertEquals(expected, actual);
     }
@@ -285,13 +137,13 @@ class HomeControllerTest {
     void genre_filter_returns_all_movies_containing_given_genre() throws Exception {
         // given
         homeController.initializeState();
-        Genre genre = Genre.DRAMA;
+        Genre genre = DRAMA;
 
         // when
         List<Movie> actual = homeController.filterByGenre(homeController.observableMovies, genre);
 
         // then
-        assertEquals(4, actual.size());
+        assertEquals(22, actual.size());
     }
 
     @Test
@@ -300,14 +152,14 @@ class HomeControllerTest {
         homeController.initializeState();
 
         // when
-        homeController.applyAllFilters("", null,0,null);
+        homeController.applyAllFilters("", null,null,null);
 
         // then
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
     @Test
-    void get_Most_Popular_Actor() throws Exception {
+    void get_most_opular_actor() throws Exception {
         //given
         homeController.initializeState();
 
@@ -319,7 +171,95 @@ class HomeControllerTest {
     }
 
     @Test
-    void get_Longest_Movie_Title() throws Exception {
+    public void get_most_popular_actor_empty_movie_list() {
+        List<Movie> movies = Collections.emptyList();
+        String mostPopular = homeController.getMostPopularActor(movies);
+        assertEquals("", mostPopular);
+    }
+
+    @Test
+    public void get_most_popular_actor_movies_with_empty_casts() {
+        List<Movie> movies = Arrays.asList(
+                new Movie("123456789"
+                        ,"Movie1"
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()));
+        String mostPopular = homeController.getMostPopularActor(movies);
+        assertEquals("", mostPopular);
+    }
+
+    @Test
+    public void get_most_popular_actor_single_movie_single_actor() {
+        List<Movie> movies = Collections.singletonList(
+                new Movie("123456789"
+                        ,"Movie1"
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()
+                        ,Arrays.asList("Mike Tester"))
+        );
+        String mostPopular = homeController.getMostPopularActor(movies);
+        assertEquals("Mike Tester", mostPopular);
+    }
+
+    @Test
+    public void get_longest_movie_title_empty_movie_list() {
+        List<Movie> movies = Collections.emptyList();
+        int longestMovie = homeController.getLongestMovieTitle(movies);
+        assertEquals(0, longestMovie);
+    }
+
+    @Test
+    public void get_longest_movie_title_with_empty_title() {
+        List<Movie> movies = Arrays.asList(
+                new Movie("123456789"
+                        ,null
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()));
+        int longestTitle = homeController.getLongestMovieTitle(movies);
+        assertEquals(0, longestTitle);
+    }
+
+    @Test
+    public void get_longest_title_single_movie_single_title() {
+        List<Movie> movies = Collections.singletonList(
+                new Movie("123456789"
+                        ,"Movie1"
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()
+                        ,Arrays.asList("Mike Tester"))
+        );
+        int longestTitle = homeController.getLongestMovieTitle(movies);
+        assertEquals(6, longestTitle);
+    }
+
+    @Test
+    void get_longest_movie_title() throws Exception {
         //given
         homeController.initializeState();
 
@@ -343,6 +283,51 @@ class HomeControllerTest {
     }
 
     @Test
+    public void count_movies_from_empty_movie_list() {
+        List<Movie> movies = Collections.emptyList();
+        long movieCount = homeController.countMoviesFrom(movies,"Martin Scorsese");
+        assertEquals(0, movieCount);
+    }
+
+    @Test
+    public void count_movies_with_empty_director() {
+        List<Movie> movies = Arrays.asList(
+                new Movie("123456789"
+                        ,null
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()
+                        ,Collections.emptyList()));
+        long movieCount = homeController.countMoviesFrom(movies,"Martin Scorsese");
+        assertEquals(0, movieCount);
+    }
+
+    @Test
+    public void count_movies_single_movie_single_director() {
+        List<Movie> movies = Collections.singletonList(
+                new Movie("123456789"
+                        ,"Movie1"
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Arrays.asList("Martin Scorsese")
+                        ,Collections.emptyList()
+                        ,Arrays.asList("Mike Tester"))
+        );
+        long movieCount = homeController.countMoviesFrom(movies,"Martin Scorsese");
+        assertEquals(1, movieCount);
+    }
+
+
+    @Test
     void get_movies_between_years() throws Exception {
         //given
         homeController.initializeState();
@@ -352,6 +337,32 @@ class HomeControllerTest {
 
         //then
         assertEquals(7,movieList.size());
+    }
+
+    @Test
+    public void get_movies_between_years_empty_movie_list() {
+        List<Movie> movies = Collections.emptyList();
+        List<Movie> movieList = homeController.getMoviesBetweenYears(movies,2000,2010);
+        assertEquals(Collections.emptyList(), movieList);
+    }
+
+    @Test
+    public void get_movies_between_years_single_movie() {
+        List<Movie> movies = Collections.singletonList(
+                new Movie("123456789"
+                        ,"Movie1"
+                        , "Test"
+                        , Collections.singletonList(DRAMA)
+                        ,1990
+                        ,7.0
+                        ,"test"
+                        ,120
+                        ,Arrays.asList("Martin Scorsese")
+                        ,Collections.emptyList()
+                        ,Arrays.asList("Mike Tester"))
+        );
+        List<Movie> movieList = homeController.getMoviesBetweenYears(movies,1990,1991);
+        assertEquals(1, movieList.size());
     }
 
 }

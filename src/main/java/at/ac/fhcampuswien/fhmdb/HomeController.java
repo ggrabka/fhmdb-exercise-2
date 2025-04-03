@@ -212,6 +212,9 @@ public class HomeController implements Initializable {
     }
 
     String getMostPopularActor(List<Movie> movies) {
+        if(movies.size()==0 || movies.stream().flatMap(movie -> movie.getMainCast().stream()).count() == 0) {
+            return "";
+        }
         List<String> actors = movies
                 .stream()
                 .flatMap(movie -> movie.getMainCast().stream())
@@ -228,6 +231,9 @@ public class HomeController implements Initializable {
     }
 
     int getLongestMovieTitle(List<Movie> movies) {
+        if(movies.size()==0 || movies.stream().allMatch(movie -> movie.getTitle() == null)) {
+            return 0;
+        }
         List<String> titles = movies
                 .stream()
                 .map(movie -> movie.getTitle())
