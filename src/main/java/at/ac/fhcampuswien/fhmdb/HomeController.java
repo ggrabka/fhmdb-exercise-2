@@ -219,15 +219,20 @@ public class HomeController implements Initializable {
                 .stream()
                 .flatMap(movie -> movie.getMainCast().stream())
                 .collect(Collectors.toList());
-        String mostFrequentActor = actors
+
+        Map<String, Long> frequencyMap = actors.stream()
+                .collect(Collectors.groupingBy(
+                        actor -> actor,
+                        Collectors.counting()
+                ));
+
+        String maxValuesString = frequencyMap.entrySet()
                 .stream()
-                .collect(Collectors.groupingBy(s -> s,Collectors.counting()))
-                .entrySet()
-                .stream()
-                .max(Map.Entry.comparingByValue())
+                .max(Comparator.comparing(Map.Entry::getValue))
                 .map(Map.Entry::getKey)
-                .orElse(null).toString();
-        return mostFrequentActor;
+                .orElse(null);
+
+        return maxValuesString;
     }
 
     int getLongestMovieTitle(List<Movie> movies) {
@@ -257,7 +262,7 @@ public class HomeController implements Initializable {
         List<Movie> moviesBetweenYears = movies
                 .stream()
                 .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
 
         return moviesBetweenYears;
     }
