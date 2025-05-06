@@ -25,6 +25,8 @@
             </padding>
          </Label>
          <Label styleClass="text-white" stylesheets="@styles.css" text="Welcome to FHMDb!" />
+         <JFXButton fx:id="HomeBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Home" />
+         <JFXButton fx:id="WatchlistBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Watchlist" />
       </children>
    </HBox>
    <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">
