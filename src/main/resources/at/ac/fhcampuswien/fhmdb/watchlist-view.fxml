@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.fhcampuswien.fhmdb.HomeController">
+<VBox prefHeight="331.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.fhcampuswien.fhmdb.WatchlistController">
    <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="347.0" spacing="20.0" style="-fx-background-color: black;">
       <padding>
          <Insets bottom="7.0" left="10.0" top="7.0" />
@@ -25,8 +25,8 @@
             </padding>
          </Label>
          <Label styleClass="text-white" stylesheets="@styles.css" text="Welcome to FHMDb!" />
-         <JFXButton fx:id="homeBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Home" onAction="#homeBtnClicked"/>
-         <JFXButton fx:id="watchlistBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Watchlist" onAction="#watchlistBtnClicked"/>
+         <JFXButton fx:id="HomeBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Home" onAction="#homeBtnClicked"/>
+         <JFXButton fx:id="WatchlistBtn" styleClass="background-yellow" stylesheets="@styles.css" text="Watchlist" onAction="#watchlistBtnClicked"/>
       </children>
    </HBox>
    <HBox spacing="5.0" styleClass="background-black" stylesheets="@styles.css">

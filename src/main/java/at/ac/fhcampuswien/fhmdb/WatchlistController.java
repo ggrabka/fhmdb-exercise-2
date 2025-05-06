@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -24,9 +23,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class HomeController implements Initializable {
+public class WatchlistController implements Initializable {
 
     @FXML
     public JFXButton homeBtn;
@@ -211,30 +209,11 @@ public class HomeController implements Initializable {
     }
 
     public void homeBtnClicked(ActionEvent actionEvent) {
-        //toDo
+        //Button should be greyed out
     }
 
     public void watchlistBtnClicked(ActionEvent actionEvent) {
-        try {
-            // Load the watchlist FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("watchlist.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 890, 620);
-
-            // Apply the stylesheet
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(FhmdbApplication.class.getResource("styles.css")).toExternalForm()
-            );
-
-            // Get the current stage from the button event
-            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-
-            // Set the new scene and title
-            stage.setTitle("FHMDb – Watchlist");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //toDo
     }
 
     public void searchBtnClicked(ActionEvent actionEvent) throws Exception {
