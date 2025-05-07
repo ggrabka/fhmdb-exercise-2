@@ -5,6 +5,7 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.ui.WatchlistMovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -25,12 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WatchlistController implements Initializable {
-
-    @FXML
-    public JFXButton homeBtn;
-
-    @FXML
-    public JFXButton wishlistBtn;
 
     @FXML
     public JFXButton searchBtn;
@@ -78,7 +73,7 @@ public class WatchlistController implements Initializable {
 
     public void initializeLayout() {
         movieListView.setItems(observableMovies);   // set the items of the listview to the observable list
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // apply custom cells to the listview
+        movieListView.setCellFactory(movieListView -> new WatchlistMovieCell()); // apply custom cells to the listview
 
         Object[] genres = Genre.values();   // get all genres
         genreComboBox.getItems().add("No filter");  // add "no filter" to the combobox
@@ -209,11 +204,30 @@ public class WatchlistController implements Initializable {
     }
 
     public void homeBtnClicked(ActionEvent actionEvent) {
-        //Button should be greyed out
+        try {
+            // Load the watchlist FXML
+            FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("home-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 890, 620);
+
+            // Apply the stylesheet
+            scene.getStylesheets().add(
+                    Objects.requireNonNull(FhmdbApplication.class.getResource("styles.css")).toExternalForm()
+            );
+
+            // Get the current stage from the button event
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+
+            // Set the new scene and title
+            stage.setTitle("FHMDb – Home");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void watchlistBtnClicked(ActionEvent actionEvent) {
-        //toDo
+        //nothing happens
     }
 
     public void searchBtnClicked(ActionEvent actionEvent) throws Exception {

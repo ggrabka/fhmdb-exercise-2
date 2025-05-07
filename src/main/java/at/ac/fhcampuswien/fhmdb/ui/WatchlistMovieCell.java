@@ -11,15 +11,19 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
 import java.util.stream.Collectors;
 
-public class MovieCell extends ListCell<Movie> {
+public class WatchlistMovieCell extends ListCell<Movie> {
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genre = new Label();
     private final Label releaseYear = new Label();
     private final Label rating = new Label();
-    private final VBox layout = new VBox(title, detail, genre, releaseYear, rating);
+    private final JFXButton showDetailsBtn = new JFXButton("Show Details");
+    private final JFXButton deleteBtn = new JFXButton("Delete");
+    private final HBox buttonBox = new HBox(showDetailsBtn, deleteBtn);
+    private final VBox layout = new VBox(title, detail, genre, releaseYear, rating, buttonBox);
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -62,6 +66,12 @@ public class MovieCell extends ListCell<Movie> {
             layout.setPadding(new Insets(10));
             layout.spacingProperty().set(10);
             layout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
+
+            buttonBox.setSpacing(10);
+            buttonBox.setPadding(new Insets(10, 0, 0, 0));
+            buttonBox.setStyle("-fx-alignment: CENTER_LEFT;");
+            showDetailsBtn.getStyleClass().add("background-yellow");
+            deleteBtn.getStyleClass().add("background-yellow");
 
             setGraphic(layout);
         }

@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
+import at.ac.fhcampuswien.fhmdb.ui.HomeMovieCell;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -27,12 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class HomeController implements Initializable {
-
-    @FXML
-    public JFXButton homeBtn;
-
-    @FXML
-    public JFXButton wishlistBtn;
 
     @FXML
     public JFXButton searchBtn;
@@ -80,7 +75,7 @@ public class HomeController implements Initializable {
 
     public void initializeLayout() {
         movieListView.setItems(observableMovies);   // set the items of the listview to the observable list
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // apply custom cells to the listview
+        movieListView.setCellFactory(movieListView -> new HomeMovieCell());
 
         Object[] genres = Genre.values();   // get all genres
         genreComboBox.getItems().add("No filter");  // add "no filter" to the combobox
@@ -211,13 +206,13 @@ public class HomeController implements Initializable {
     }
 
     public void homeBtnClicked(ActionEvent actionEvent) {
-        //toDo
-    }
+        //nothing happens
+        }
 
     public void watchlistBtnClicked(ActionEvent actionEvent) {
         try {
             // Load the watchlist FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("watchlist.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("watchlist-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 890, 620);
 
             // Apply the stylesheet
