@@ -6,6 +6,9 @@ module at.ac.fhcampuswien.fhmdb {
     requires com.google.gson;
     requires java.net.http;
     requires org.apache.httpcomponents.httpclient;
+    requires java.sql;
+    requires ormlite.core;
+    requires ormlite.jdbc;
 
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml;
     opens at.ac.fhcampuswien.fhmdb.models to com.google.gson;

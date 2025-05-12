@@ -133,4 +133,10 @@ public class Movie {
         }
         return ratingList;
     }
+
+    public String getApiId() {
+        return id;
+    }
+
+
 }

@@ -1,11 +1,11 @@
 package at.ac.fhcampuswien.fhmdb;
 
-import at.ac.fhcampuswien.fhmdb.models.Genre;
-import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
-import at.ac.fhcampuswien.fhmdb.models.SortedState;
-import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.database.*;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
+import at.ac.fhcampuswien.fhmdb.models.*;
+import at.ac.fhcampuswien.fhmdb.logic.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.ui.WatchlistMovieCell;
+import at.ac.fhcampuswien.fhmdb.util.ErrorDialog;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -34,88 +34,94 @@ public class WatchlistController implements Initializable {
     public TextField searchField;
 
     @FXML
-    public JFXListView movieListView;
+    public JFXListView<Movie> movieListView;
 
     @FXML
-    public JFXComboBox genreComboBox;
+    public JFXComboBox<Object> genreComboBox;
 
-    public JFXComboBox releaseYearComboBox;
-
-    public JFXComboBox ratingComboBox;
+    public JFXComboBox<Object> releaseYearComboBox;
+    public JFXComboBox<Object> ratingComboBox;
 
     @FXML
     public JFXButton sortBtn;
 
     public List<Movie> allMovies;
-
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
-
     protected SortedState sortedState;
 
-    public MovieAPI movieAPI = new MovieAPI();
+    private MovieRepository movieRepository;
+    private WatchlistRepository watchlistRepository;
+
+    private final ClickEventHandler<Movie> onRemoveFromWatchlistClicked = (movie) -> {
+        try {
+            watchlistRepository.removeFromWatchlist(movie.getId());
+            observableMovies.remove(movie);
+        } catch (DatabaseException e) {
+            ErrorDialog.show("Fehler beim Entfernen des Films aus der Watchlist.");
+        }
+    };
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             initializeState();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ErrorDialog.show("Fehler beim Initialisieren der Watchlist.");
         }
         initializeLayout();
     }
 
-    public void initializeState () throws Exception {
-        allMovies = Movie.initializeMovies();
+    public void initializeState() throws Exception {
+        DatabaseManager.createConnectionSource();
+        DatabaseManager.createTables();
+
+        movieRepository = new MovieRepository(DatabaseManager.getMovieDao());
+        watchlistRepository = new WatchlistRepository(DatabaseManager.getWatchlistDao());
+
+        List<WatchlistMovieEntity> watchlist = watchlistRepository.getWatchlist();
+        List<MovieEntity> allCached = movieRepository.getAllMovies();
+
+        allMovies = allCached.stream()
+                .filter(movie -> watchlist.stream().anyMatch(w -> w.getApiId().equals(movie.getApiId())))
+                .map(movie -> MovieEntity.toMovies(List.of(movie)).get(0))
+                .toList();
+
         observableMovies.clear();
-        observableMovies.addAll(allMovies); // add all movies to the observable list
+        observableMovies.addAll(allMovies);
         sortedState = SortedState.NONE;
     }
 
     public void initializeLayout() {
-        movieListView.setItems(observableMovies);   // set the items of the listview to the observable list
-        movieListView.setCellFactory(movieListView -> new WatchlistMovieCell()); // apply custom cells to the listview
+        movieListView.setItems(observableMovies);
+        movieListView.setCellFactory(view -> new WatchlistMovieCell(onRemoveFromWatchlistClicked));
 
-        Object[] genres = Genre.values();   // get all genres
-        genreComboBox.getItems().add("No filter");  // add "no filter" to the combobox
-        genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
+        genreComboBox.getItems().add("No filter");
+        genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setPromptText("Filter by Genre");
 
-        List<Integer> releaseYearList = new ArrayList<>();
-        for(Movie movie : observableMovies) {
-            if(!releaseYearList.contains(movie.getReleaseYear())) {
-                releaseYearList.add(movie.getReleaseYear());
-            }
-        }
-        releaseYearList.sort(Comparator.naturalOrder());
+        List<Integer> releaseYearList = observableMovies.stream()
+                .map(Movie::getReleaseYear)
+                .distinct()
+                .sorted()
+                .toList();
+
         releaseYearComboBox.getItems().add("No release year");
         releaseYearComboBox.getItems().addAll(releaseYearList);
-        releaseYearComboBox.setPromptText("Filter by Release Year");
+        releaseYearComboBox.setPromptText("Filter by Year");
 
-        List<Double> ratingList = new ArrayList<>();
-        for(Movie movie : observableMovies) {
-            if(!ratingList.contains(movie.getRating())){
-                ratingList.add(movie.getRating());
-            }
-        }
-        ratingList.sort(Comparator.naturalOrder());
+        List<Double> ratingList = observableMovies.stream()
+                .map(Movie::getRating)
+                .distinct()
+                .sorted()
+                .toList();
+
         ratingComboBox.getItems().add("No rating");
         ratingComboBox.getItems().addAll(ratingList);
-        ratingComboBox.setPromptText("Filter By Rating");
-        releaseYearComboBox.setPromptText("Filter by Year");
+        ratingComboBox.setPromptText("Filter by Rating");
     }
 
-    public void sortMovies(){
+    public void sortMovies() {
         if (sortedState == SortedState.NONE || sortedState == SortedState.DESCENDING) {
-            sortMovies(SortedState.ASCENDING);
-        } else if (sortedState == SortedState.ASCENDING) {
-            sortMovies(SortedState.DESCENDING);
-        }
-    }
-    // sort movies based on sortedState
-    // by default sorted state is NONE
-    // afterwards it switches between ascending and descending
-    public void sortMovies(SortedState sortDirection) {
-        if (sortDirection == SortedState.ASCENDING) {
             observableMovies.sort(Comparator.comparing(Movie::getTitle));
             sortedState = SortedState.ASCENDING;
         } else {
@@ -124,179 +130,103 @@ public class WatchlistController implements Initializable {
         }
     }
 
-    public List<Movie> filterByQuery(List<Movie> movies, String query){
-        if(query == null || query.isEmpty()) return movies;
-
-        if(movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie ->
-                    movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                    movie.getDescription().toLowerCase().contains(query.toLowerCase())
-                )
-                .toList();
-    }
-
-    public List<Movie> filterByGenre(List<Movie> movies, Genre genre){
-        if(genre == null) return movies;
-
-        if(movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie -> movie.getGenres().contains(genre))
-                .toList();
-    }
-
-    public List<Movie> filterByReleaseYear(List<Movie> movies,int releaseYear) {
-        if(releaseYear == 0) return movies;
-
-        if(movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie -> movie.getReleaseYear() == releaseYear)
-                .toList();
-    }
-
-    public List<Movie> filterByRating(List<Movie> movies, double rating) {
-        if(rating == 0.0) return movies;
-
-        if(movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie -> movie.getRating() == rating)
-                .toList();
-    }
-
-    public void applyAllFilters(String searchQuery, Object genre, Object releaseYear, Object rating) throws Exception{
-        String genreStr = (genre != null) ? genre.toString() : null;
-        List<Movie> filteredMovies = (List<Movie>) movieAPI.getFilmList(searchQuery,genreStr,releaseYear,rating);
-
-        if (!searchQuery.isEmpty()) {
-            filteredMovies = filterByQuery(filteredMovies, searchQuery);
-        }
-
-        if (genre != null && !genre.toString().equals("No filter")) {
-            filteredMovies = filterByGenre(filteredMovies, Genre.valueOf(genre.toString()));
-        }
-
-        if (releaseYear != null && !releaseYear.toString().equals("No release year")) {
-            filteredMovies = filterByReleaseYear(filteredMovies, Integer.valueOf(releaseYear.toString()));
-        }
-
-        if (rating != null && !rating.toString().equals("No rating")) {
-            filteredMovies = filterByRating(filteredMovies, Double.valueOf(rating.toString()));
-        }
-
-        observableMovies.clear();
-        observableMovies.addAll(filteredMovies);
-    }
-
-    public void homeBtnClicked(ActionEvent actionEvent) {
-        try {
-            // Load the watchlist FXML
-            FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("home-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 890, 620);
-
-            // Apply the stylesheet
-            scene.getStylesheets().add(
-                    Objects.requireNonNull(FhmdbApplication.class.getResource("styles.css")).toExternalForm()
-            );
-
-            // Get the current stage from the button event
-            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-
-            // Set the new scene and title
-            stage.setTitle("FHMDb – Home");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void watchlistBtnClicked(ActionEvent actionEvent) {
-        //nothing happens
-    }
-
-    public void searchBtnClicked(ActionEvent actionEvent) throws Exception {
-        String searchQuery = searchField.getText().trim().toLowerCase();
+    public void searchBtnClicked(ActionEvent actionEvent) {
+        String query = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
         Object releaseYear = releaseYearComboBox.getSelectionModel().getSelectedItem();
         Object rating = ratingComboBox.getSelectionModel().getSelectedItem();
 
-        applyAllFilters(searchQuery, genre,releaseYear,rating);
-        sortMovies(sortedState);
+        List<Movie> filtered = allMovies;
+
+        if (query != null && !query.isEmpty()) {
+            filtered = filtered.stream()
+                    .filter(m -> m.getTitle().toLowerCase().contains(query)
+                            || m.getDescription().toLowerCase().contains(query))
+                    .toList();
+        }
+
+        if (genre != null && !genre.equals("No filter")) {
+            filtered = filtered.stream()
+                    .filter(m -> m.getGenres().contains(Genre.valueOf(genre.toString())))
+                    .toList();
+        }
+
+        if (releaseYear != null && !releaseYear.equals("No release year")) {
+            filtered = filtered.stream()
+                    .filter(m -> m.getReleaseYear() == Integer.parseInt(releaseYear.toString()))
+                    .toList();
+        }
+
+        if (rating != null && !rating.equals("No rating")) {
+            filtered = filtered.stream()
+                    .filter(m -> m.getRating() == Double.parseDouble(rating.toString()))
+                    .toList();
+        }
+
+        observableMovies.clear();
+        observableMovies.addAll(filtered);
     }
 
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
     }
 
-    String getMostPopularActor(List<Movie> movies) {
-        if(movies.size()==0 || movies.stream().flatMap(movie -> movie.getMainCast().stream()).count() == 0) {
-            return "";
+    public void homeBtnClicked(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("home-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 890, 620);
+            scene.getStylesheets().add(Objects.requireNonNull(FhmdbApplication.class.getResource("styles.css")).toExternalForm());
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setTitle("FHMDb – Home");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            ErrorDialog.show("Fehler beim Laden des Home-Screens.");
         }
-        List<String> actors = movies
-                .stream()
-                .flatMap(movie -> movie.getMainCast().stream())
-                .collect(Collectors.toList());
+    }
 
-        Map<String, Long> frequencyMap = actors.stream()
-                .collect(Collectors.groupingBy(
-                        actor -> actor,
-                        Collectors.counting()
-                ));
+    public void watchlistBtnClicked(ActionEvent actionEvent) {
+        // nichts tun – wir sind bereits auf der Watchlist
+    }
 
-        String maxValuesString = frequencyMap.entrySet()
-                .stream()
-                .max(Comparator.comparing(Map.Entry::getValue))
+    // Zusatzfunktionen für Tests oder Statistik
+    public String getMostPopularActor(List<Movie> movies) {
+        if (movies == null || movies.isEmpty()) return "";
+
+        return movies.stream()
+                .flatMap(m -> m.getMainCast().stream())
+                .collect(Collectors.groupingBy(actor -> actor, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .orElse(null);
-
-        return maxValuesString;
+                .orElse("");
     }
 
-    int getLongestMovieTitle(List<Movie> movies) {
-        if(movies.size()==0 || movies.stream().allMatch(movie -> movie.getTitle() == null)) {
-            return 0;
-        }
-        List<String> titles = movies
-                .stream()
-                .map(movie -> movie.getTitle())
-                .collect(Collectors.toList());
+    public int getLongestMovieTitle(List<Movie> movies) {
+        if (movies == null || movies.isEmpty()) return 0;
 
-        String longestMovieTitle = titles
-                .stream()
-                .max(Comparator.comparingInt(String::length)).get();
-        return longestMovieTitle.length();
+        return movies.stream()
+                .map(Movie::getTitle)
+                .filter(Objects::nonNull)
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
     }
 
-    long countMoviesFrom(List<Movie> movies, String director) {
-        List<Movie> moviesFromDirector = movies
-                .stream()
-                .filter(movie -> movie.getDirectors().contains(director))
-                .collect(Collectors.toList());
-        return moviesFromDirector.size();
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        if (movies == null || director == null) return 0;
+
+        return movies.stream()
+                .filter(m -> m.getDirectors().contains(director))
+                .count();
     }
 
-    List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
-        List<Movie> moviesBetweenYears = movies
-                .stream()
-                .filter(movie -> movie.getReleaseYear() >= startYear && movie.getReleaseYear() <= endYear)
-                .collect(Collectors.toList());
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        if (movies == null) return List.of();
 
-        return moviesBetweenYears;
+        return movies.stream()
+                .filter(m -> m.getReleaseYear() >= startYear && m.getReleaseYear() <= endYear)
+                .toList();
     }
 }
+

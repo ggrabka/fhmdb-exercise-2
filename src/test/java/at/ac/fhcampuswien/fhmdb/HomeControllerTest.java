@@ -38,7 +38,7 @@ class HomeControllerTest {
         homeController.sortedState = SortedState.NONE;
 
         // when
-        homeController.sortMovies();
+        homeController.sortMovies(sortedState);
 
         // then
         List<Movie> expected = Movie.initializeMovies();
@@ -54,7 +54,7 @@ class HomeControllerTest {
         homeController.sortedState = SortedState.ASCENDING;
 
         // when
-        homeController.sortMovies();
+        homeController.sortMovies(sortedState);
 
         // then
         List<Movie> expected = Movie.initializeMovies();
@@ -69,7 +69,7 @@ class HomeControllerTest {
         homeController.sortedState = SortedState.DESCENDING;
 
         // when
-        homeController.sortMovies();
+        homeController.sortMovies(sortedState);
 
         // then
         List<Movie> expected = Movie.initializeMovies();
