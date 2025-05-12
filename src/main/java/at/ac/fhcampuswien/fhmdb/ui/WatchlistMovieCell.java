@@ -36,6 +36,7 @@ public class WatchlistMovieCell extends ListCell<Movie> {
         });
 
         // Layout & Style
+        title.setFont(title.getFont().font(20));
         title.getStyleClass().add("text-yellow");
         detail.getStyleClass().add("text-white");
         genre.getStyleClass().add("text-white");

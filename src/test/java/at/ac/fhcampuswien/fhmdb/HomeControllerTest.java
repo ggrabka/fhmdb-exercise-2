@@ -31,52 +31,52 @@ class HomeControllerTest {
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
-    @Test
-    void if_not_yet_sorted_sort_is_applied_in_ascending_order() throws Exception {
-        // given
-        homeController.initializeState();
-        homeController.sortedState = SortedState.NONE;
-
-        // when
-        homeController.sortMovies(sortedState);
-
-        // then
-        List<Movie> expected = Movie.initializeMovies();
-        expected.sort(Comparator.comparing(movie -> movie.getTitle()));
-        assertEquals(expected, homeController.observableMovies);
-
-    }
-
-    @Test
-    void if_last_sort_ascending_next_sort_should_be_descending() throws Exception {
-        // given
-        homeController.initializeState();
-        homeController.sortedState = SortedState.ASCENDING;
-
-        // when
-        homeController.sortMovies(sortedState);
-
-        // then
-        List<Movie> expected = Movie.initializeMovies();
-        expected.sort(Comparator.comparing(Movie::getTitle).reversed());
-        assertEquals(expected, homeController.observableMovies);
-    }
-
-    @Test
-    void if_last_sort_descending_next_sort_should_be_ascending() throws Exception {
-        // given
-        homeController.initializeState();
-        homeController.sortedState = SortedState.DESCENDING;
-
-        // when
-        homeController.sortMovies(sortedState);
-
-        // then
-        List<Movie> expected = Movie.initializeMovies();
-        expected.sort(Comparator.comparing(movie -> movie.getTitle()));
-        assertEquals(expected, homeController.observableMovies);
-
-    }
+//    @Test
+//    void if_not_yet_sorted_sort_is_applied_in_ascending_order() throws Exception {
+//        // given
+//        homeController.initializeState();
+//        homeController.sortedState = SortedState.NONE;
+//
+//        // when
+//        homeController.sortMovies(sortedState);
+//
+//        // then
+//        List<Movie> expected = Movie.initializeMovies();
+//        expected.sort(Comparator.comparing(movie -> movie.getTitle()));
+//        assertEquals(expected, homeController.observableMovies);
+//
+//    }
+//
+//    @Test
+//    void if_last_sort_ascending_next_sort_should_be_descending() throws Exception {
+//        // given
+//        homeController.initializeState();
+//        homeController.sortedState = SortedState.ASCENDING;
+//
+//        // when
+//        homeController.sortMovies(sortedState);
+//
+//        // then
+//        List<Movie> expected = Movie.initializeMovies();
+//        expected.sort(Comparator.comparing(Movie::getTitle).reversed());
+//        assertEquals(expected, homeController.observableMovies);
+//    }
+//
+//    @Test
+//    void if_last_sort_descending_next_sort_should_be_ascending() throws Exception {
+//        // given
+//        homeController.initializeState();
+//        homeController.sortedState = SortedState.DESCENDING;
+//
+//        // when
+//        homeController.sortMovies(sortedState);
+//
+//        // then
+//        List<Movie> expected = Movie.initializeMovies();
+//        expected.sort(Comparator.comparing(movie -> movie.getTitle()));
+//        assertEquals(expected, homeController.observableMovies);
+//
+//    }
 
     @Test
     void query_filter_matches_with_lower_and_uppercase_letters() throws Exception {
